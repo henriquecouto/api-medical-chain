@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const { FamilyHistorySchema } = require('./FamilyHistoryModel');
 
 const PatientSchema = new mongoose.Schema({
-  name: { type: String, required: true },
   birthDate: { type: Date, required: true },
   occupation: { type: String, required: true },
   gender: { type: String, required: true },
@@ -11,7 +10,7 @@ const PatientSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-  familyHistory: { type: FamilyHistorySchema },
+  familyHistory: { type: [FamilyHistorySchema] },
 });
 
 module.exports = { Patient: mongoose.model('Patient', PatientSchema) };

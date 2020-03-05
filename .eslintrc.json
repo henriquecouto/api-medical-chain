@@ -16,6 +16,9 @@
   "rules": {
     "prettier/prettier": "error",
     "prefer-arrow-callback": "error",
-    "arrow-parens": "off"
+    "arrow-parens": "off",
+    "arrow-body-style": "off",
+    "no-underscore-dangle": "off",
+    "no-param-reassign": "off"
   }
 }
