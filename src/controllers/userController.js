@@ -7,7 +7,7 @@ const saveUser = (
   user,
   res,
   next = () => {
-    res.json({ message: 'User created with success', user });
+    res.json({ message: 'user created with success', user });
   }
 ) => {
   console.log('aaa');
@@ -33,7 +33,7 @@ const generateUser = {
         }
 
         res.json({
-          message: 'Doctor user created with success!',
+          message: 'doctor user created with success',
           ...dataUser,
           ...dataDoctor,
         });
@@ -56,7 +56,7 @@ const generateUser = {
         }
 
         res.json({
-          message: 'Patient user created with success!',
+          message: 'patient user created with success',
           ...dataUser,
           ...dataPatient,
         });
