@@ -1,7 +1,6 @@
 const { User } = require('../models/UserModel');
 const { Patient } = require('../models/PatientModel');
 const { Doctor } = require('../models/DoctorModel');
-const { FamilyHistory } = require('../models/FamilyHistoryModel');
 const random = require('../helpers/random');
 
 const saveUser = (
