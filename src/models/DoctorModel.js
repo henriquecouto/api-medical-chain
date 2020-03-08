@@ -5,10 +5,10 @@ const DoctorSchema = new mongoose.Schema({
   crm: {
     type: String,
     required: true,
-    max: 12,
+    maxlength: 12,
     unique: true,
   },
-  user_id: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,

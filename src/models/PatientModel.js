@@ -5,7 +5,7 @@ const PatientSchema = new mongoose.Schema({
   birthDate: { type: Date, required: true },
   occupation: { type: String, required: true },
   gender: { type: String, required: true },
-  user_id: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
