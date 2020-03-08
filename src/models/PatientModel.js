@@ -9,6 +9,7 @@ const PatientSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
+    unique: true,
   },
   familyHistory: { type: [FamilyHistorySchema] },
 });

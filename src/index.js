@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use('/users', require('./routes/user'));
+app.use('/auth', require('./routes/user'));
 app.use('/patients', require('./routes/patient'));
 app.use('/doctors', require('./routes/doctor'));
 app.use('/appointments', require('./routes/appointment'));
