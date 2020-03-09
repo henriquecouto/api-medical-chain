@@ -1,9 +1,9 @@
 module.exports = res => (error, data) => {
   if (error) {
-    res.status(500).json({ message: error });
+    return res.status(500).json({ message: error });
   }
 
-  res.json({
+  return res.json({
     message: 'data loaded with success',
     data,
   });

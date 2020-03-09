@@ -8,10 +8,10 @@ exports.createAppointment = async (req, res) => {
 
   await aptm.save(error => {
     if (error) {
-      res.status(500).json({ message: error });
+      return res.status(500).json({ message: error });
     }
 
-    res.json({
+    return res.json({
       message: 'appointment created with success',
       data,
     });

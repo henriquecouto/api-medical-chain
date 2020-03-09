@@ -12,10 +12,10 @@ module.exports = {
       doctor.save(doctorError => {
         if (doctorError) {
           user.remove();
-          res.status(500).json({ message: doctorError });
+          return res.status(500).json({ message: doctorError });
         }
 
-        res.json({
+        return res.json({
           message: 'doctor user created with success',
           data: {
             ...dataUser,
@@ -37,10 +37,10 @@ module.exports = {
       patient.save(patientError => {
         if (patientError) {
           user.remove();
-          res.status(500).json({ message: patientError });
+          return res.status(500).json({ message: patientError });
         }
 
-        res.json({
+        return res.json({
           message: 'patient user created with success',
           data: {
             ...dataUser,

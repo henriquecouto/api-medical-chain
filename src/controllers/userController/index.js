@@ -26,11 +26,11 @@ exports.login = async (req, res) => {
 
   const user = await User.findOne({ login });
   if (!user) {
-    res.status(400).json({ message: 'user not found' });
+    return res.status(400).json({ message: 'user not found' });
   }
 
   if (password !== user.password) {
-    res.status(400).json({ message: 'invalid password' });
+    return res.status(400).json({ message: 'invalid password' });
   }
 
   const load = {
@@ -49,5 +49,5 @@ exports.login = async (req, res) => {
     expiresIn: 86400,
   });
 
-  res.json({ token, data });
+  return res.json({ token, data });
 };
