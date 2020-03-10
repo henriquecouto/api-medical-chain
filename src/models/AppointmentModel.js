@@ -13,10 +13,16 @@ const AppointmentSchema = new mongoose.Schema({
   },
   patient: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Doctor',
+    ref: 'Patient',
     required: true,
   },
   registrationDate: { type: Date, default: Date.now() },
+  blocked: {
+    type: Boolean,
+    required: true,
+    default: false,
+    // select: false,
+  },
 });
 
 module.exports = {

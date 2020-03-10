@@ -12,4 +12,6 @@ router
   .put(controller.update)
   .patch(controller.update);
 
+router.route('/blocked/:id').get(controller.getBlockedAppointment);
+
 module.exports = router;

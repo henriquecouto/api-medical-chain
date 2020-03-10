@@ -1,5 +1,7 @@
+const bigchaindb = require('bigchaindb-driver');
 const { Appointment } = require('../../models/AppointmentModel');
 const dataLoaded = require('../../helpers/dataLoaded');
+const { bigchainConn } = require('../../helpers/constants');
 
 exports.createAppointment = async (req, res) => {
   const data = req.body;
@@ -19,12 +21,22 @@ exports.createAppointment = async (req, res) => {
 };
 
 exports.getAppointments = async (req, res) => {
-  Appointment.find(dataLoaded(res)).populate('user');
+  Appointment.find(dataLoaded(res))
+    .populate('patient')
+    .populate('doctor');
 };
 
 exports.getAppointment = async (req, res) => {
   const { id } = req.params;
-  Appointment.findById(id, dataLoaded(res)).populate('user');
+  Appointment.findById(id, dataLoaded(res))
+    .populate('doctor')
+    .populate('patient');
+};
+
+exports.getBlockedAppointment = async (req, res) => {
+  const { id } = req.params;
+  const assets = await bigchainConn.searchAssets(id);
+  res.json({ assets });
 };
 
 exports.update = async (req, res) => {
