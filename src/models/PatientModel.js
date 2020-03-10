@@ -11,6 +11,10 @@ const PatientSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  tokensApp: {
+    type: [String],
+    // select: false
+  },
   familyHistory: { type: [FamilyHistorySchema] },
 });
 

@@ -36,13 +36,15 @@ const makeTransactions = transactions => {
       const alreadyBlocked = await bigchainConn.searchAssets(aptmId);
       if (alreadyBlocked.length) {
         await Appointment.updateOne({ _id: aptmId }, { blocked: true });
-        return;
+        return false;
       }
 
       await bigchainConn.postTransactionCommit(transaction);
       await Appointment.updateOne({ _id: aptmId }, { blocked: true });
+      return true;
     } catch (error) {
       console.log(error);
+      return false;
     }
   });
 };
@@ -50,6 +52,6 @@ const makeTransactions = transactions => {
 module.exports = () => {
   return schedule.scheduleJob('*/5 * * * * *', async () => {
     const transactions = await loadTransactions();
-    const result = makeTransactions(transactions);
+    makeTransactions(transactions);
   });
 };

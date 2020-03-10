@@ -22,7 +22,7 @@ exports.createUser = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const { login, password } = req.body;
+  const { login, password, tokenApp } = req.body;
 
   const user = await User.findOne({ login });
   if (!user) {
@@ -37,8 +37,28 @@ exports.login = async (req, res) => {
     doctor: () => {
       return Doctor.findOne({ user: user._id }).populate('user');
     },
-    patient: () => {
-      return Patient.findOne({ user: user._id }).populate('user');
+    patient: async () => {
+      if (!tokenApp) {
+        return res
+          .status(400)
+          .json({ message: 'notification token not provided' });
+      }
+
+      const patient = await Patient.findOne({ user: user._id }).populate(
+        'user'
+      );
+
+      const { tokensApp } = patient;
+      if (!tokensApp.includes(tokenApp)) {
+        const newsTokensApp = tokensApp;
+        newsTokensApp.push(tokenApp);
+        await Patient.updateOne(
+          { _id: patient._id },
+          { tokensApp: newsTokensApp }
+        );
+      }
+
+      return patient;
     },
     clerk: user,
   };
