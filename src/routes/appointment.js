@@ -13,5 +13,6 @@ router
   .patch(controller.update);
 
 router.route('/blocked/:id').get(controller.getBlockedAppointment);
+router.route('/init-treatment').post(controller.initTreatment);
 
 module.exports = router;

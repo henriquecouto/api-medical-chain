@@ -1,6 +1,7 @@
 const { Appointment } = require('../../models/AppointmentModel');
 const dataLoaded = require('../../helpers/dataLoaded');
 const { bigchainConn } = require('../../helpers/constants');
+const notifyMedication = require('../../schedules/notifyMedication');
 
 exports.createAppointment = async (req, res) => {
   const data = req.body;
@@ -32,12 +33,6 @@ exports.getAppointment = async (req, res) => {
     .populate('patient');
 };
 
-exports.getBlockedAppointment = async (req, res) => {
-  const { id } = req.params;
-  const assets = await bigchainConn.searchAssets(id);
-  res.json({ assets });
-};
-
 exports.update = async (req, res) => {
   const { id } = req.params;
   const update = req.body;
@@ -48,4 +43,30 @@ exports.update = async (req, res) => {
     { new: true, runValidators: true },
     dataLoaded(res)
   ).populate('user');
+};
+
+exports.initTreatment = async (req, res) => {
+  const { id, medicationId } = req.body;
+
+  const {
+    data: { treatment },
+  } = (await bigchainConn.searchAssets(id))[0];
+
+  const medication = treatment.find(v => v._id === medicationId);
+
+  if (!medication) {
+    res
+      .status(400)
+      .json({ message: "medication doesn't exists in appointment" });
+  }
+
+  notifyMedication(medication);
+
+  res.json(medication);
+};
+
+exports.getBlockedAppointment = async (req, res) => {
+  const { id } = req.params;
+  const assets = await bigchainConn.searchAssets(id);
+  res.json({ assets });
 };
