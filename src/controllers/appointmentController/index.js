@@ -1,4 +1,3 @@
-const bigchaindb = require('bigchaindb-driver');
 const { Appointment } = require('../../models/AppointmentModel');
 const dataLoaded = require('../../helpers/dataLoaded');
 const { bigchainConn } = require('../../helpers/constants');

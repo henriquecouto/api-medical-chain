@@ -2,6 +2,7 @@ const schedule = require('node-schedule');
 const bigchaindb = require('bigchaindb-driver');
 const { Appointment } = require('../models/AppointmentModel');
 const { bigchainConn } = require('../helpers/constants');
+const { sendNotification } = require('../helpers/notify');
 
 const keyPair = new bigchaindb.Ed25519Keypair();
 
@@ -29,10 +30,11 @@ const loadTransactions = async () => {
   });
 };
 
-const makeTransactions = transactions => {
+const makeTransactions = async transactions => {
   transactions.forEach(async transaction => {
     try {
       const aptmId = transaction.asset.data._id;
+      const { tokensApp } = transaction.asset.data.patient;
       const alreadyBlocked = await bigchainConn.searchAssets(aptmId);
       if (alreadyBlocked.length) {
         await Appointment.updateOne({ _id: aptmId }, { blocked: true });
@@ -41,6 +43,13 @@ const makeTransactions = transactions => {
 
       await bigchainConn.postTransactionCommit(transaction);
       await Appointment.updateOne({ _id: aptmId }, { blocked: true });
+
+      sendNotification(
+        tokensApp,
+        'Nova consulta',
+        'Há uma nova consulta disponível para visualização!',
+        aptmId
+      );
       return true;
     } catch (error) {
       console.log(error);
