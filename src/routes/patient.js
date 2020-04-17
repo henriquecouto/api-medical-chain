@@ -6,6 +6,7 @@ router.use(authMiddleware);
 
 router.route('/').get(controller.getPatients);
 router.route('/:id').get(controller.getPatient);
+router.route('/:id/appointments').get(controller.getPatientAppointments);
 router
   .route('/:id')
   .put(controller.update)

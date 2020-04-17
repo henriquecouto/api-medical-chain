@@ -1,4 +1,5 @@
 const { Patient } = require('../../models/PatientModel');
+const { Appointment } = require('../../models/AppointmentModel');
 const dataLoaded = require('../../helpers/dataLoaded');
 
 exports.getPatients = async (req, res) => {
@@ -20,4 +21,10 @@ exports.update = async (req, res) => {
     { new: true, runValidators: true },
     dataLoaded(res)
   ).populate('user');
+};
+
+exports.getPatientAppointments = async (req, res) => {
+  const { id } = req.params;
+
+  Appointment.find({ patient: id }, dataLoaded(res));
 };
