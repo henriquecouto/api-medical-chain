@@ -3,6 +3,7 @@ const bigchaindb = require('bigchaindb-driver');
 const { Appointment } = require('../models/AppointmentModel');
 const { bigchainConn } = require('../helpers/constants');
 const { sendNotification } = require('../helpers/notify');
+const isEquivalent = require('../helpers/isEquivalent');
 
 const keyPair = new bigchaindb.Ed25519Keypair();
 
@@ -14,7 +15,7 @@ const loadTransactions = async () => {
   return aptms.map(data => {
     const transaction = bigchaindb.Transaction.makeCreateTransaction(
       data,
-      null,
+      { search: 'all' },
       [
         bigchaindb.Transaction.makeOutput(
           bigchaindb.Transaction.makeEd25519Condition(keyPair.publicKey)
@@ -41,8 +42,20 @@ const makeTransactions = async transactions => {
         return false;
       }
 
-      await bigchainConn.postTransactionCommit(transaction);
-      await Appointment.updateOne({ _id: aptmId }, { blocked: true });
+      const sendedTransaction = await bigchainConn.postTransactionCommit(
+        transaction
+      );
+
+      await Appointment.updateOne(
+        { _id: aptmId },
+        {
+          blocked: true,
+          blockedCorrect: isEquivalent(
+            sendedTransaction.asset.data,
+            transaction.asset.data.toObject()
+          ),
+        }
+      );
 
       sendNotification(
         tokensApp,

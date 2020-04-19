@@ -70,3 +70,8 @@ exports.getBlockedAppointment = async (req, res) => {
   const assets = await bigchainConn.searchAssets(id);
   res.json({ assets });
 };
+
+exports.getBlockedAll = async (req, res) => {
+  const assets = await bigchainConn.searchMetadata('all');
+  res.json({ assets });
+};

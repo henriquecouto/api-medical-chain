@@ -23,6 +23,12 @@ const AppointmentSchema = new mongoose.Schema({
     default: false,
     // select: false,
   },
+  blockedCorrect: {
+    type: Boolean,
+    required: true,
+    default: false,
+    // select: false,
+  },
 });
 
 module.exports = {
