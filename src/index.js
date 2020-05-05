@@ -30,6 +30,7 @@ app.use('/auth', require('./routes/user'));
 app.use('/patients', require('./routes/patient'));
 app.use('/doctors', require('./routes/doctor'));
 app.use('/appointments', require('./routes/appointment'));
+app.use('/analytics', require('./routes/analytics'));
 
 app.listen(3001, () => {
   console.log('App listening on http://localhost:3001');

@@ -72,7 +72,7 @@ const makeTransactions = async transactions => {
 };
 
 module.exports = () => {
-  return schedule.scheduleJob('*/60 * * * * *', async () => {
+  return schedule.scheduleJob('*/900 * * * * *', async () => {
     const transactions = await loadTransactions();
     makeTransactions(transactions);
   });
