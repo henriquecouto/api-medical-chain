@@ -1,100 +1,112 @@
 const { Appointment } = require('../../models/AppointmentModel');
 const dataLoaded = require('../../helpers/dataLoaded');
 
+const months = {
+  1: 'Janeiro',
+  2: 'Fevereiro',
+  3: 'Março',
+  4: 'Abril',
+  5: 'Maio',
+  6: 'Junho',
+  7: 'Julho',
+  8: 'Agosto',
+  9: 'Setembro',
+  10: 'Outubro',
+  11: 'Novembro',
+  12: 'Dezembro',
+};
+
 exports.blocked = async (req, res) => {
-  const blocked = await Appointment.count({ blocked: true });
-  const waiting = await Appointment.count({ blocked: false });
-  return res.send({ blocked, waiting });
+  const blocked = await Appointment.countDocuments({ blocked: true });
+  const waiting = await Appointment.countDocuments({ blocked: false });
+  return res.send([{ blocked, waiting }]);
 };
 
 exports.assurance = async (req, res) => {
-  const right = await Appointment.count({ blockedCorrect: true });
-  const wrong = await Appointment.count({ blockedCorrect: false });
-  return res.send({ right, wrong });
+  const right = await Appointment.countDocuments({ blockedCorrect: true });
+  const wrong = await Appointment.countDocuments({ blockedCorrect: false });
+  return res.send([{ right, wrong }]);
 };
 
 exports.period = async (req, res) => {
-  const { value, quantity } = req.body;
-
-  const load = {
-    daily: () => {
-      Appointment.aggregate(
-        [
-          {
-            $match: {
-              registrationDate: {
-                $gte: new Date(
-                  new Date().setDate(new Date().getDate() - quantity)
-                ),
+  Appointment.aggregate(
+    [
+      {
+        $facet: {
+          registrationDate: [
+            {
+              $match: {
+                registrationDate: {
+                  $gte: new Date(
+                    new Date().setMonth(new Date().getMonth() - 5)
+                  ),
+                },
               },
             },
-          },
-          {
-            $group: {
-              _id: {
-                date: '$registrationDate',
-              },
-              count: { $sum: 1 },
-            },
-          },
-        ],
-        dataLoaded(res)
-      );
-    },
-    monthly: () => {
-      Appointment.aggregate(
-        [
-          {
-            $match: {
-              registrationDate: {
-                $gte: new Date(
-                  new Date().setMonth(new Date().getMonth() - quantity)
-                ),
+            {
+              $group: {
+                _id: {
+                  $month: '$registrationDate',
+                },
+                countRegistration: { $sum: 1 },
               },
             },
-          },
-          {
-            $group: {
-              _id: {
-                $month: '$registrationDate',
-              },
-              count: { $sum: 1 },
-            },
-          },
-        ],
-        dataLoaded(res)
-      );
-    },
-    yearly: () => {
-      Appointment.aggregate(
-        [
-          {
-            $match: {
-              registrationDate: {
-                $gte: new Date(
-                  new Date().setFullYear(new Date().getFullYear - quantity)
-                ),
+          ],
+          blockedDate: [
+            {
+              $match: {
+                blockedDate: {
+                  $gte: new Date(
+                    new Date().setMonth(new Date().getMonth() - 5)
+                  ),
+                },
               },
             },
-          },
-          {
-            $group: {
-              _id: {
-                $year: '$registrationDate',
+            {
+              $group: {
+                _id: {
+                  $month: '$blockedDate',
+                },
+                countBlocked: { $sum: 1 },
               },
-              count: { $sum: 1 },
             },
+          ],
+        },
+      },
+      { $unwind: '$registrationDate' },
+      { $unwind: '$blockedDate' },
+      {
+        $redact: {
+          $cond: [
+            {
+              $eq: ['$registrationDate._id', '$blockedDate._id'],
+            },
+            '$$KEEP',
+            '$$PRUNE',
+          ],
+        },
+      },
+      {
+        $project: {
+          data: {
+            month: '$registrationDate._id',
+            registered: '$registrationDate.countRegistration',
+            blocked: '$blockedDate.countBlocked',
           },
-        ],
-        dataLoaded(res)
-      );
-    },
-    default: () => {
-      return res.send({
-        message: "expected 'daily', 'monthly' or 'yearly' ",
+        },
+      },
+      { $unwind: '$data' },
+      { $replaceRoot: { newRoot: '$data' } },
+      { $sort: { month: 1 } },
+    ],
+    (error, data) => {
+      data = data.map(v => {
+        v.month = months[v.month];
+        return v;
       });
-    },
-  };
-
-  return load[value] ? load[value]() : load.default();
+      console.log(data);
+      if (error) return res.status(500).send(error);
+      return res.send(data);
+    }
+  );
 };

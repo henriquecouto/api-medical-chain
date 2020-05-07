@@ -7,6 +7,7 @@ const print = (text, ...others) => {
 };
 
 const makeAppointmentData = (doctor, patient) => {
+  const month = Number((Math.random() * 5).toFixed(0));
   return {
     exams: ['hemograma'],
     symptons: ['dor de cabeça'],
@@ -14,6 +15,7 @@ const makeAppointmentData = (doctor, patient) => {
     treatment: [{ name: 'Dipirona', interval: 8, recurrencies: 8 }],
     doctor,
     patient,
+    registrationDate: Date.now() - 2.628e9 * month,
   };
 };
 
@@ -60,7 +62,7 @@ async function main() {
   let ok = 0;
   let error = 0;
 
-  const array = Array.from(Array(100).keys());
+  const array = Array.from(Array(10).keys());
 
   for (let i = 0; i < array.length; i++) {
     setTimeout(async () => {

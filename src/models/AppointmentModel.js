@@ -23,10 +23,11 @@ const AppointmentSchema = new mongoose.Schema({
     default: false,
     // select: false,
   },
+  blockedDate: { type: Date },
   blockedCorrect: {
     type: Boolean,
-    required: true,
-    default: false,
+    // required: true,
+    // default: false,
     // select: false,
   },
 });

@@ -50,6 +50,7 @@ const makeTransactions = async transactions => {
         { _id: aptmId },
         {
           blocked: true,
+          blockedDate: new Date(),
           blockedCorrect: isEquivalent(
             sendedTransaction.asset.data,
             transaction.asset.data.toObject()
@@ -72,7 +73,7 @@ const makeTransactions = async transactions => {
 };
 
 module.exports = () => {
-  return schedule.scheduleJob('*/900 * * * * *', async () => {
+  return schedule.scheduleJob('*/3 * * * * *', async () => {
     const transactions = await loadTransactions();
     makeTransactions(transactions);
   });
