@@ -62,9 +62,7 @@ async function main() {
   let ok = 0;
   let error = 0;
 
-  const array = Array.from(Array(10).keys());
-
-  for (let i = 0; i < array.length; i++) {
+  for (let i = 0; i < 10; i++) {
     setTimeout(async () => {
       const patient = await loadPatient(headers);
 
