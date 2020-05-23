@@ -1,5 +1,5 @@
 const { Appointment } = require('../../models/AppointmentModel');
-const dataLoaded = require('../../helpers/dataLoaded');
+const { Medication } = require('../../models/MedicationModel');
 
 const months = {
   1: 'Janeiro',
@@ -109,4 +109,16 @@ exports.period = async (req, res) => {
       return res.send(data);
     }
   );
+};
+
+exports.sended = async (req, res) => {
+  const right = await Appointment.countDocuments({ sendedApp: true });
+  const wrong = await Appointment.countDocuments({ sendedApp: false });
+  return res.send([{ right, wrong }]);
+};
+
+exports.notification = async (req, res) => {
+  const right = await Medication.countDocuments({ notifyCorrect: true });
+  const wrong = await Medication.countDocuments({ notifyCorrect: false });
+  return res.send([{ right, wrong }]);
 };

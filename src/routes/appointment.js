@@ -14,5 +14,6 @@ router
 
 router.route('/blocked/:id').get(controller.getBlockedAppointment);
 router.route('/init-treatment').post(controller.initTreatment);
+router.route('/finish-treatment').post(controller.finishTreatment);
 
 module.exports = router;

@@ -1,4 +1,7 @@
+const md5 = require('md5');
+
 const { Appointment } = require('../../models/AppointmentModel');
+const { Medication } = require('../../models/MedicationModel');
 const dataLoaded = require('../../helpers/dataLoaded');
 const { bigchainConn } = require('../../helpers/constants');
 const notifyMedication = require('../../schedules/notifyMedication');
@@ -65,10 +68,21 @@ exports.initTreatment = async (req, res) => {
   res.json(medication);
 };
 
+exports.finishTreatment = async (req, res) => {
+  const { medicationId, update } = req.body;
+
+  try {
+    await Medication.findByIdAndUpdate(medicationId, update);
+    return res.send({ message: 'medication updated' });
+  } catch (error) {
+    return res.send({ error: true, message: error });
+  }
+};
+
 exports.getBlockedAppointment = async (req, res) => {
   const { id } = req.params;
   const assets = await bigchainConn.searchAssets(id);
-  res.json({ assets });
+  res.json({ assets, md5: md5(JSON.stringify(assets)) });
 };
 
 exports.getBlockedAll = async (req, res) => {

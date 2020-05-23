@@ -30,6 +30,9 @@ const AppointmentSchema = new mongoose.Schema({
     // default: false,
     // select: false,
   },
+  sendedApp: {
+    type: Boolean,
+  },
 });
 
 module.exports = {
