@@ -69,10 +69,25 @@ exports.initTreatment = async (req, res) => {
 };
 
 exports.finishTreatment = async (req, res) => {
-  const { medicationId, update } = req.body;
+  const { appointmentId, medicationId, notifyCorrect } = req.body;
 
   try {
-    await Medication.findByIdAndUpdate(medicationId, update);
+    const appointment = await Appointment.findById(appointmentId);
+
+    const medicationIndex = appointment.treatment.findIndex(
+      v => String(v._id) === medicationId
+    );
+
+    const medication = appointment.treatment.find(
+      v => String(v._id) === medicationId
+    );
+
+    medication.notifyCorrect = notifyCorrect;
+
+    appointment.treatment[medicationIndex] = medication;
+
+    await Appointment.findByIdAndUpdate(appointmentId, appointment);
+
     return res.send({ message: 'medication updated' });
   } catch (error) {
     return res.send({ error: true, message: error });

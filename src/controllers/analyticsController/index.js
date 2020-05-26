@@ -118,7 +118,35 @@ exports.sended = async (req, res) => {
 };
 
 exports.notification = async (req, res) => {
-  const right = await Medication.countDocuments({ notifyCorrect: true });
-  const wrong = await Medication.countDocuments({ notifyCorrect: false });
+  const query = await Appointment.aggregate([
+    { $unwind: '$treatment' },
+    {
+      $group: {
+        _id: { notifyCorrect: '$treatment.notifyCorrect' },
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
+  let right;
+  let wrong;
+
+  query.forEach(({ _id, count }) => {
+    if (_id.notifyCorrect === false) {
+      wrong = count;
+    } else if (_id.notifyCorrect === true) {
+      right = count;
+    }
+  });
+
+  // for (i in query) {
+  //   const result = query[i]._id;
+  //   if (result.notifyCorrect === false) {
+  //     wrong = result.count;
+  //   } else if (result.notifyCorrect === true) {
+  //     right = result.count;
+  //   }
+  // }
+
   return res.send([{ right, wrong }]);
 };
