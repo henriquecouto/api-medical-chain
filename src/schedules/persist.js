@@ -50,7 +50,7 @@ const makeTransactions = async transactions => {
         { _id: aptmId },
         {
           blocked: true,
-          blockedDate: new Date(),
+          blockedDate: Date.now(),
           blockedCorrect: isEquivalent(
             sendedTransaction.asset.data,
             transaction.asset.data.toObject()

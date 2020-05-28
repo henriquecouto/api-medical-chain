@@ -57,22 +57,22 @@ async function main() {
     'Content-Type': 'application/json',
   };
 
-  print('token: ', token);
+  // print('token: ', token);
 
   let ok = 0;
   let error = 0;
 
-  for (let i = 0; i < 10000; i++) {
+  for (let i = 0; i < 30000; i++) {
     setTimeout(async () => {
       const patient = await loadPatient(headers);
 
-      print('patient: ', patient);
+      // print('patient: ', patient);
 
       const appointment = makeAppointmentData(data.user._id, patient);
-      print('appointment: ', appointment);
+      // print('appointment: ', appointment);
 
       const result = await sendAppointment(headers, appointment);
-      print('result: ', result);
+      // print('result: ', result);
 
       if (result.message === 'appointment created with success') {
         ok++;

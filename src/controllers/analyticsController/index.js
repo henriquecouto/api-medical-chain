@@ -1,5 +1,4 @@
 const { Appointment } = require('../../models/AppointmentModel');
-const { Medication } = require('../../models/MedicationModel');
 
 const months = {
   1: 'Janeiro',
@@ -33,25 +32,6 @@ exports.period = async (req, res) => {
     [
       {
         $facet: {
-          registrationDate: [
-            {
-              $match: {
-                registrationDate: {
-                  $gte: new Date(
-                    new Date().setMonth(new Date().getMonth() - 5)
-                  ),
-                },
-              },
-            },
-            {
-              $group: {
-                _id: {
-                  $month: '$registrationDate',
-                },
-                countRegistration: { $sum: 1 },
-              },
-            },
-          ],
           blockedDate: [
             {
               $match: {
@@ -71,42 +51,49 @@ exports.period = async (req, res) => {
               },
             },
           ],
-        },
-      },
-      { $unwind: '$registrationDate' },
-      { $unwind: '$blockedDate' },
-      {
-        $redact: {
-          $cond: [
+          registrationDate: [
             {
-              $eq: ['$registrationDate._id', '$blockedDate._id'],
+              $match: {
+                registrationDate: {
+                  $gte: new Date(
+                    new Date().setMonth(new Date().getMonth() - 5)
+                  ),
+                },
+              },
             },
-            '$$KEEP',
-            '$$PRUNE',
+            {
+              $group: {
+                _id: {
+                  $month: '$registrationDate',
+                },
+                countRegistration: { $sum: 1 },
+              },
+            },
           ],
         },
       },
-      {
-        $project: {
-          data: {
-            month: '$registrationDate._id',
-            registered: '$registrationDate.countRegistration',
-            blocked: '$blockedDate.countBlocked',
-          },
-        },
-      },
-      { $unwind: '$data' },
-      { $replaceRoot: { newRoot: '$data' } },
-      { $sort: { month: 1 } },
     ],
     (error, data) => {
-      data = data.map(v => {
-        v.month = months[v.month];
-        return v;
-      });
-      console.log(data);
+      let finalData = data[0].registrationDate
+        .map(v => {
+          v.registered = v.countRegistration;
+          v.blocked = data[0].blockedDate.filter(i => v._id === i._id);
+          if (v.blocked[0]) {
+            v.blocked = v.blocked[0].countBlocked;
+          } else {
+            v.blocked = 0;
+          }
+          delete v.countRegistration;
+          return v;
+        })
+        .sort((a, b) => a._id - b._id)
+        .map(v => {
+          v.month = months[v._id];
+          delete v._id;
+          return v;
+        });
       if (error) return res.status(500).send(error);
-      return res.send(data);
+      return res.send(finalData);
     }
   );
 };
@@ -138,15 +125,6 @@ exports.notification = async (req, res) => {
       right = count;
     }
   });
-
-  // for (i in query) {
-  //   const result = query[i]._id;
-  //   if (result.notifyCorrect === false) {
-  //     wrong = result.count;
-  //   } else if (result.notifyCorrect === true) {
-  //     right = result.count;
-  //   }
-  // }
 
   return res.send([{ right, wrong }]);
 };
