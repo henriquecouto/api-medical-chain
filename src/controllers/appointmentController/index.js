@@ -46,7 +46,7 @@ exports.update = async (req, res) => {
   ).populate('user');
 };
 
-exports.update = async (req, res) => {
+exports.updateTreatment = async (req, res) => {
   const { appointmentId, medicationId, update } = req.body;
 
   // {param: 'notifyCorrect', value: true}
