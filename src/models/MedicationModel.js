@@ -6,6 +6,7 @@ const MedicationSchema = new mongoose.Schema({
   recurrencies: { type: Number, required: true, min: 1 },
   initialDate: { type: Date },
   notifyCorrect: { type: Boolean },
+  takeNumbers: { type: Number },
 });
 
 module.exports = {

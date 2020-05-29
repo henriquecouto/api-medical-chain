@@ -1,10 +1,8 @@
 const md5 = require('md5');
 
 const { Appointment } = require('../../models/AppointmentModel');
-const { Medication } = require('../../models/MedicationModel');
 const dataLoaded = require('../../helpers/dataLoaded');
 const { bigchainConn } = require('../../helpers/constants');
-const notifyMedication = require('../../schedules/notifyMedication');
 
 exports.createAppointment = async (req, res) => {
   const data = req.body;
@@ -48,28 +46,11 @@ exports.update = async (req, res) => {
   ).populate('user');
 };
 
-exports.initTreatment = async (req, res) => {
-  const { id, medicationId } = req.body;
+exports.update = async (req, res) => {
+  const { appointmentId, medicationId, update } = req.body;
 
-  const {
-    data: { treatment },
-  } = (await bigchainConn.searchAssets(id))[0];
-
-  const medication = treatment.find(v => v._id === medicationId);
-
-  if (!medication) {
-    res
-      .status(400)
-      .json({ message: "medication doesn't exists in appointment" });
-  }
-
-  notifyMedication(medication);
-
-  res.json(medication);
-};
-
-exports.finishTreatment = async (req, res) => {
-  const { appointmentId, medicationId, notifyCorrect } = req.body;
+  // {param: 'notifyCorrect', value: true}
+  // {param: 'takeNumbers', value: 3}
 
   try {
     const appointment = await Appointment.findById(appointmentId);
@@ -82,7 +63,7 @@ exports.finishTreatment = async (req, res) => {
       v => String(v._id) === medicationId
     );
 
-    medication.notifyCorrect = notifyCorrect;
+    medication[update.param] = update.value;
 
     appointment.treatment[medicationIndex] = medication;
 
