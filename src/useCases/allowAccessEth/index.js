@@ -1,4 +1,6 @@
 const { decrypt } = require('../../helpers/crypto');
+const eth = require('../../helpers/eth');
+const setup = require('../../setup/eth.json');
 
 const allowAccessEthUseCase = async ({
   contractAddress,
@@ -9,17 +11,17 @@ const allowAccessEthUseCase = async ({
   const realContractAddress = decrypt(contractAddress);
   const realAccountAddress = decrypt(accountAddress);
 
-  // @TODO chamar método allowAccess do contrato TemporaryAccess
+  const contract = new eth.Contract(
+    setup.contracts.temporaryAccess.abi,
+    setup.contracts.temporaryAccess.address
+  );
+  const result = await contract.methods
+    .allowAccess(allowUntil, realContractAddress, realAccountAddress)
+    .send({ from: setup.ownerAccount });
+
   // @TODO enviar email informando link de acesso
 
-  return {
-    contractAddress,
-    accountAddress,
-    allowUntil,
-    email,
-    realContractAddress,
-    realAccountAddress,
-  };
+  return result;
 };
 
 module.exports = allowAccessEthUseCase;
