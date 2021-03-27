@@ -88,6 +88,10 @@ exports.getBlockedAll = async (req, res) => {
 };
 
 exports.allowAccess = async (req, res) => {
-  const response = await allowAccessEthUseCase(req.body);
-  res.json(response);
+  try {
+    const response = await allowAccessEthUseCase(req.body);
+    res.json(response);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 };
