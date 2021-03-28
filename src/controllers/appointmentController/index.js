@@ -3,6 +3,7 @@ const md5 = require('md5');
 const { Appointment } = require('../../models/AppointmentModel');
 const dataLoaded = require('../../helpers/dataLoaded');
 const { bigchainConn } = require('../../helpers/constants');
+const allowAccessEthUseCase = require('../../useCases/allowAccessEth');
 
 exports.createAppointment = async (req, res) => {
   const data = req.body;
@@ -84,4 +85,13 @@ exports.getBlockedAppointment = async (req, res) => {
 exports.getBlockedAll = async (req, res) => {
   const assets = await bigchainConn.searchMetadata('all');
   res.json({ assets });
+};
+
+exports.allowAccess = async (req, res) => {
+  try {
+    const response = await allowAccessEthUseCase(req.body);
+    res.json(response);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 };
