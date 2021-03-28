@@ -1,315 +1,12 @@
-const Web3 = require('web3');
 const isEquivalent = require('../helpers/isEquivalent');
 const parseEthResult = require('../helpers/parseEthResult');
+const { encrypt } = require('../helpers/crypto');
 const { Appointment } = require('../models/AppointmentModel');
-
-const provider = new Web3.providers.WebsocketProvider('http://localhost:7545');
-const { eth } = new Web3(provider);
-
-const clinicalDataContract = [
-  {
-    inputs: [],
-    stateMutability: 'nonpayable',
-    type: 'constructor',
-  },
-  {
-    inputs: [],
-    name: 'minter',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-    constant: true,
-  },
-  {
-    inputs: [
-      {
-        components: [
-          {
-            components: [
-              {
-                internalType: 'string',
-                name: 'name',
-                type: 'string',
-              },
-              {
-                internalType: 'string',
-                name: 'occupation',
-                type: 'string',
-              },
-              {
-                internalType: 'string',
-                name: 'gender',
-                type: 'string',
-              },
-              {
-                internalType: 'uint256',
-                name: 'birthDate',
-                type: 'uint256',
-              },
-            ],
-            internalType: 'struct Patient',
-            name: 'patient',
-            type: 'tuple',
-          },
-          {
-            components: [
-              {
-                internalType: 'string',
-                name: 'name',
-                type: 'string',
-              },
-              {
-                internalType: 'string',
-                name: 'crm',
-                type: 'string',
-              },
-              {
-                internalType: 'string',
-                name: 'specialization',
-                type: 'string',
-              },
-            ],
-            internalType: 'struct Doctor',
-            name: 'doctor',
-            type: 'tuple',
-          },
-          {
-            components: [
-              {
-                internalType: 'string[]',
-                name: 'exams',
-                type: 'string[]',
-              },
-              {
-                internalType: 'string[]',
-                name: 'symptons',
-                type: 'string[]',
-              },
-              {
-                internalType: 'string[]',
-                name: 'diagnosis',
-                type: 'string[]',
-              },
-              {
-                internalType: 'uint256',
-                name: 'registrationDate',
-                type: 'uint256',
-              },
-            ],
-            internalType: 'struct Appointment',
-            name: 'appointment',
-            type: 'tuple',
-          },
-        ],
-        internalType: 'struct ClinicalDataType',
-        name: '_clinicalData',
-        type: 'tuple',
-      },
-    ],
-    name: 'save',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'get',
-    outputs: [
-      {
-        components: [
-          {
-            components: [
-              {
-                internalType: 'string',
-                name: 'name',
-                type: 'string',
-              },
-              {
-                internalType: 'string',
-                name: 'occupation',
-                type: 'string',
-              },
-              {
-                internalType: 'string',
-                name: 'gender',
-                type: 'string',
-              },
-              {
-                internalType: 'uint256',
-                name: 'birthDate',
-                type: 'uint256',
-              },
-            ],
-            internalType: 'struct Patient',
-            name: 'patient',
-            type: 'tuple',
-          },
-          {
-            components: [
-              {
-                internalType: 'string',
-                name: 'name',
-                type: 'string',
-              },
-              {
-                internalType: 'string',
-                name: 'crm',
-                type: 'string',
-              },
-              {
-                internalType: 'string',
-                name: 'specialization',
-                type: 'string',
-              },
-            ],
-            internalType: 'struct Doctor',
-            name: 'doctor',
-            type: 'tuple',
-          },
-          {
-            components: [
-              {
-                internalType: 'string[]',
-                name: 'exams',
-                type: 'string[]',
-              },
-              {
-                internalType: 'string[]',
-                name: 'symptons',
-                type: 'string[]',
-              },
-              {
-                internalType: 'string[]',
-                name: 'diagnosis',
-                type: 'string[]',
-              },
-              {
-                internalType: 'uint256',
-                name: 'registrationDate',
-                type: 'uint256',
-              },
-            ],
-            internalType: 'struct Appointment',
-            name: 'appointment',
-            type: 'tuple',
-          },
-        ],
-        internalType: 'struct ClinicalDataType',
-        name: '',
-        type: 'tuple',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-    constant: true,
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_reader',
-        type: 'address',
-      },
-    ],
-    name: 'get',
-    outputs: [
-      {
-        components: [
-          {
-            components: [
-              {
-                internalType: 'string',
-                name: 'name',
-                type: 'string',
-              },
-              {
-                internalType: 'string',
-                name: 'occupation',
-                type: 'string',
-              },
-              {
-                internalType: 'string',
-                name: 'gender',
-                type: 'string',
-              },
-              {
-                internalType: 'uint256',
-                name: 'birthDate',
-                type: 'uint256',
-              },
-            ],
-            internalType: 'struct Patient',
-            name: 'patient',
-            type: 'tuple',
-          },
-          {
-            components: [
-              {
-                internalType: 'string',
-                name: 'name',
-                type: 'string',
-              },
-              {
-                internalType: 'string',
-                name: 'crm',
-                type: 'string',
-              },
-              {
-                internalType: 'string',
-                name: 'specialization',
-                type: 'string',
-              },
-            ],
-            internalType: 'struct Doctor',
-            name: 'doctor',
-            type: 'tuple',
-          },
-          {
-            components: [
-              {
-                internalType: 'string[]',
-                name: 'exams',
-                type: 'string[]',
-              },
-              {
-                internalType: 'string[]',
-                name: 'symptons',
-                type: 'string[]',
-              },
-              {
-                internalType: 'string[]',
-                name: 'diagnosis',
-                type: 'string[]',
-              },
-              {
-                internalType: 'uint256',
-                name: 'registrationDate',
-                type: 'uint256',
-              },
-            ],
-            internalType: 'struct Appointment',
-            name: 'appointment',
-            type: 'tuple',
-          },
-        ],
-        internalType: 'struct ClinicalDataType',
-        name: '',
-        type: 'tuple',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-    constant: true,
-  },
-];
-const contractAddress = '0x494e9DBbBe29451BE988D86B249FB0Bc88ba61eA';
-const from = '0x9F1Fd3F74855334A506e1C64Bd8d3b530eD539f4';
+const eth = require('../helpers/eth');
+const {
+  ownerAccount,
+  contracts: { clinicalData: clinicalDataContract },
+} = require('../config/eth.json');
 
 const loadTransactions = async () => {
   const aptms = await Appointment.find({ blocked: false })
@@ -349,15 +46,22 @@ const loadTransactions = async () => {
 };
 
 const makeTransactions = async transactions => {
-  const contract = new eth.Contract(clinicalDataContract, contractAddress);
+  const contract = new eth.Contract(clinicalDataContract.abi);
 
   transactions.forEach(async tx => {
-    console.log('job initiated');
     try {
-      await contract.methods
+      const deployedContract = await contract
+        .deploy({
+          data: clinicalDataContract.bytecode,
+        })
+        .send({ from: ownerAccount, gas: 6721975, gasPrice: 20000000000 });
+
+      await deployedContract.methods
         .save(tx.data)
-        .send({ from, gas: 1000000, gasPrice: 20000000000 });
-      const result = parseEthResult(await contract.methods.get().call());
+        .send({ from: ownerAccount, gas: 6721975, gasPrice: 20000000000 });
+      const result = parseEthResult(
+        await deployedContract.methods.get().call()
+      );
 
       await Appointment.updateOne(
         { _id: tx.id },
@@ -365,6 +69,7 @@ const makeTransactions = async transactions => {
           blocked: true,
           blockedDate: Date.now(),
           blockedCorrect: isEquivalent(result, tx.data),
+          blockedContractAddress: encrypt(deployedContract._address),
         }
       );
 
