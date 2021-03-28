@@ -30,6 +30,7 @@ const AppointmentSchema = new mongoose.Schema({
     // default: false,
     // select: false,
   },
+  blockedContractAddress: {},
   sendedApp: {
     type: Boolean,
   },
