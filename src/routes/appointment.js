@@ -2,8 +2,6 @@ const router = require('express').Router();
 const controller = require('../controllers/appointmentController');
 const authMiddleware = require('../middlewares/auth');
 
-router.route('/allow-access').post(controller.allowAccess);
-
 router.use(authMiddleware);
 
 router.route('/').post(controller.createAppointment);
@@ -16,5 +14,6 @@ router
 
 router.route('/blocked/:id').get(controller.getBlockedAppointment);
 router.route('/update-treatment').post(controller.updateTreatment);
+router.route('/allow-access').post(controller.allowAccess);
 
 module.exports = router;
