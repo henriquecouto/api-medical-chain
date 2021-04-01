@@ -27,7 +27,7 @@ const decrypt = hash => {
     decipher.final(),
   ]);
 
-  return decrpyted.toString();
+  return decrpyted.toString().replace('\x06\x06\x06\x06\x06\x06', '');
 };
 
 module.exports = {
