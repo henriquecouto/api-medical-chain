@@ -2,6 +2,8 @@ const router = require('express').Router();
 const controller = require('../controllers/appointmentController');
 const authMiddleware = require('../middlewares/auth');
 
+router.route('/external').get(controller.externalGetAppointments);
+
 router.use(authMiddleware);
 
 router.route('/').post(controller.createAppointment);

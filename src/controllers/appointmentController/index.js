@@ -4,6 +4,7 @@ const { Appointment } = require('../../models/AppointmentModel');
 const dataLoaded = require('../../helpers/dataLoaded');
 const { bigchainConn } = require('../../helpers/constants');
 const allowAccessEthUseCase = require('../../useCases/allowAccessEth');
+const externalGetAppointmentsEthUseCase = require('../../useCases/externalGetAppointmentsEthUseCase');
 
 exports.createAppointment = async (req, res) => {
   const data = req.body;
@@ -92,6 +93,15 @@ exports.allowAccess = async (req, res) => {
     const response = await allowAccessEthUseCase(req.body);
     res.json(response);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json({ error: 'an unknown error has occurred' });
+  }
+};
+
+exports.externalGetAppointments = async (req, res) => {
+  try {
+    const response = await externalGetAppointmentsEthUseCase(req.body);
+    res.json(response);
+  } catch (error) {
+    res.status(500).json({ error: 'an unknown error has occurred' });
   }
 };
