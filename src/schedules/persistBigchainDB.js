@@ -13,7 +13,7 @@ const loadTransactions = async () => {
 
   return aptms.map(data => {
     const transaction = bigchaindb.Transaction.makeCreateTransaction(
-      data,
+      JSON.parse(JSON.stringify(data)),
       { search: 'all' },
       [
         bigchaindb.Transaction.makeOutput(
@@ -23,10 +23,12 @@ const loadTransactions = async () => {
       keyPair.publicKey
     );
 
-    return bigchaindb.Transaction.signTransaction(
+    const signedTransaction = bigchaindb.Transaction.signTransaction(
       transaction,
       keyPair.privateKey
     );
+
+    return signedTransaction;
   });
 };
 
