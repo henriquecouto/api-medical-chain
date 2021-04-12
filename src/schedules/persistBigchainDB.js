@@ -54,7 +54,7 @@ const makeTransactions = async transactions => {
           blockedDate: Date.now(),
           blockedCorrect: isEquivalent(
             sendedTransaction.asset.data,
-            transaction.asset.data.toObject()
+            transaction.asset.data
           ),
         }
       );

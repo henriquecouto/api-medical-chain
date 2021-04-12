@@ -23,7 +23,7 @@ const login = async () => {
   return await (
     await fetch('http://localhost:3001/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ login: 'henrique', password: '123' }),
+      body: JSON.stringify({ login: 'dr.henrique', password: '123' }),
       headers: { 'Content-Type': 'application/json' },
     })
   ).json();
@@ -62,13 +62,13 @@ async function main() {
   let ok = 0;
   let error = 0;
 
-  for (let i = 0; i < 30000; i++) {
+  for (let i = 0; i < 2; i++) {
     setTimeout(async () => {
       const patient = await loadPatient(headers);
 
       // print('patient: ', patient);
 
-      const appointment = makeAppointmentData(data.user._id, patient);
+      const appointment = makeAppointmentData(data._id, patient);
       // print('appointment: ', appointment);
 
       const result = await sendAppointment(headers, appointment);
